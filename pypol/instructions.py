@@ -64,6 +64,10 @@ class PrintInstruction(Instruction):
       e = self.end.execute()
     except AttributeError:
       e = self.end
+    if type(o) == float:
+      print(o - int(0))
+      if o - int(o) == 0:
+        o = int(o)
     print(o, end=e)
 class StringSplitInstruction(Instruction):
   def __init__(self, interpreter, string, sep=" "):
@@ -385,6 +389,9 @@ class CastToStringInstruction(Instruction):
     except AttributeError:
       value = self.value
     try:
+      if type(value) == float:
+        if value - int(value) == 0:
+          return str(int(value))
       return str(value)
     except ValueError:
       return None
@@ -696,7 +703,7 @@ class IfInstruction(Instruction):
       c = self.condition.execute()
     except AttributeError:
       c = self.condition
-    if c == True:
+    if bool(c):
       try:
         self.true.execute()
       except AttributeError:

@@ -214,7 +214,7 @@ class Interpreter():
           parsedArgs.append(arg.r.replace("\\n", "\n"))
         elif arg[0] in CONSTANTS:
           parsedArgs.append(ConstantInstruction(CONSTANTS[arg[0]]))
-        elif all([c in "-1234567890" for c in arg]):
+        elif all([c in "-1234567890." for c in arg]):
           try:
             parsedArgs.append(int(arg))
           except ValueError:
