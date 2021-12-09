@@ -47,6 +47,9 @@ conversionTable = {
   "≠": UnequalComparison,
   "≬": BetweenInstruction,
 
+  "!": NotInstruction,
+  "&": AndInstruction,
+  "|": OrInstruction,
 
   "∆": IncreaseInstruction,
   "∇": DecreaseInstruction,
@@ -105,6 +108,9 @@ altNames = {
   "randnum": "∿",
   "randfloat": "≀",
   "roundnum": "≖",
+  "logicand": "&",
+  "logicor": "|",
+  "logicnot": "!"
 }
 
 class Interpreter():
@@ -208,13 +214,13 @@ class Interpreter():
           parsedArgs.append(arg.r.replace("\\n", "\n"))
         elif arg[0] in CONSTANTS:
           parsedArgs.append(ConstantInstruction(CONSTANTS[arg[0]]))
-        elif arg[0] in conversionTable:
-          parsedArgs.append(parseInstruction(arg))
         elif all([c in "-1234567890" for c in arg]):
           try:
             parsedArgs.append(int(arg))
           except ValueError:
             parsedArgs.append(float(arg))
+        elif arg[0] in conversionTable:
+          parsedArgs.append(parseInstruction(arg))
         elif any(c in "⁰¹²³⁴⁵⁶⁷⁸⁹" for c in arg):
           try:
             parsedArgs.append(MemoryReadInstruction(self, int("".join([str("⁰¹²³⁴⁵⁶⁷⁸⁹".find(c)) for c in arg]))))

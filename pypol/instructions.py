@@ -5,6 +5,7 @@ CONSTANTS = {
   "T": True, 
   "F": False, 
   "ĥ": "Hello, World!", 
+  "ô": 100,
   "ó": 1000000,
   "ò": 1000000000,
   "π": math.pi,
@@ -13,6 +14,8 @@ CONSTANTS = {
   "⒬": list("qwertyuiop"),
   "Ⓐ": string.ascii_letters,
   "⒜": list(string.ascii_letters),
+  "ⓛ": string.ascii_lowercase,
+  "Ⓛ": string.ascii_uppercase,
   "①": "".join([str(_) for _ in list(range(10))]),
   "⑴": list(range(10)),
   "⑩": list(range(1, 100)),
@@ -289,7 +292,7 @@ class ListRemoveInstruction(Instruction):
 
 
 class MemoryWriteInstruction(Instruction):
-  def __init__(self, interpreter, address, data):
+  def __init__(self, interpreter, address, data=0):
     self.address = address
     self.data = data
     self.interpreter = interpreter
@@ -490,26 +493,77 @@ class BetweenInstruction(Instruction):
       n3 = self.n3
     return n1 < n2 < n3
 
+class AndInstruction(Instruction):
+  def __init__(self, interpreter, i1, i2):
+    self.i1 = i1
+    self.i2 = i2
+  def execute(self):
+    try:
+      i1 = self.i1.execute()
+    except AttributeError:
+      i1 = self.i1
+    try:
+      i2 = self.i2.execute()
+    except AttributeError:
+      i2 = self.i2
+    
+    return i1 and i2
+class OrInstruction(Instruction):
+  def __init__(self, interpreter, i1, i2):
+    self.i1 = i1
+    self.i2 = i2
+  def execute(self):
+    try:
+      i1 = self.i1.execute()
+    except AttributeError:
+      i1 = self.i1
+    try:
+      i2 = self.i2.execute()
+    except AttributeError:
+      i2 = self.i2
+    
+    return i1 or i2
+class NotInstruction(Instruction):
+  def __init__(self, interpreter, i1):
+    self.i1 = i1
+  def execute(self):
+    try:
+      i1 = self.i1.execute()
+    except AttributeError:
+      i1 = self.i1
+    
+    return not i1
+
 class IncreaseInstruction(Instruction):
-  def __init__(self, interpreter, address):
+  def __init__(self, interpreter, address, amount=1):
     self.interpreter = interpreter
     self.address = address
+    self.amount = amount
   def execute(self):
     try:
       a = self.address.execute()
     except AttributeError:
       a = self.address
-    self.interpreter.memory[a] += 1
+    try:
+      i = self.amount.execute()
+    except AttributeError:
+      i = self.amount
+    self.interpreter.memory[a] += i
 class DecreaseInstruction(Instruction):
-  def __init__(self, interpreter, address):
+  def __init__(self, interpreter, address, amount=1):
     self.interpreter = interpreter
     self.address = address
+    self.amount = amount
   def execute(self):
     try:
       a = self.address.execute()
     except AttributeError:
       a = self.address
-    self.interpreter.memory[a] -= 1
+    try:
+      i = self.amount.execute()
+    except AttributeError:
+      i = self.amount
+    self.interpreter.memory[a] -= i
 class GetSignInstruction(Instruction):
   def __init__(self, interpreter, n1):
     self.n1 = n1
