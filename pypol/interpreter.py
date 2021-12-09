@@ -29,6 +29,8 @@ conversionTable = {
   "f": ForLoopInstruction,
   "∈": ForCounterInstruction,
   "∋": ForItemInstruction,
+  "?": IfInstruction,
+  ":": FunctionInstruction,
   "⍭": DelayInstruction,
 
   "<": LessThanComparison,
@@ -46,7 +48,9 @@ conversionTable = {
   "≐": GetEvenInstruction,
   "∓": GetSignInstruction,
   "⌿": AbsoluteValueInstruction,
-
+  "∿": RandomNumberInstruction,
+  "≀": RandomFloatInstruction,
+  "≖": RoundInstruction,
 }
 
 altNames = {
@@ -83,7 +87,12 @@ altNames = {
   "getsign": "∓",
   "abs": "⌿",
   "append": "a",
-  "listsum": "⊕"
+  "listsum": "⊕",
+  "if": "?",
+  "function": ":",
+  "randnum": "∿",
+  "randfloat": "≀",
+  "round": "≖",
 }
 
 class Interpreter():
@@ -176,6 +185,8 @@ class Interpreter():
           parsedArgs.append(arg)
         elif type(arg) == String:
           parsedArgs.append(arg.r)
+        elif arg[0] in CONSTANTS:
+          parsedArgs.append(ConstantInstruction(CONSTANTS[arg[0]]))
         elif arg[0] in conversionTable:
           parsedArgs.append(parseInstruction(arg))
         elif all([c in "-1234567890" for c in arg]):

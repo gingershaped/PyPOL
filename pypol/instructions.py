@@ -1,6 +1,7 @@
-import time, math, string
+import time, math, string, random
 
 CONSTANTS = {
+  "↹": "PyPOL APOL interpreter v0.1.0 by Ginger Industries 2021",
   "T": True, 
   "F": False, 
   "ĥ": "Hello, World!", 
@@ -38,7 +39,7 @@ CONSTANTS = {
 
 
 class Instruction():
-  def __init__(self):
+  def __init__(self, interpreter):
     pass
 class ConstantInstruction(Instruction):
   def __init__(self, constant):
@@ -423,7 +424,7 @@ class GetSignInstruction(Instruction):
       n1 = self.n1
     return n1 >= 0
 class GetEvenInstruction(Instruction):
-  def __init__(self, interpreter, n1, n2):
+  def __init__(self, interpreter, n1):
     self.n1 = n1
   def execute(self):
     try:
@@ -432,7 +433,7 @@ class GetEvenInstruction(Instruction):
       n1 = self.n1
     return not bool(n1 % 2)
 class AbsoluteValueInstruction(Instruction):
-  def __init__(self, interpreter, n1, n2):
+  def __init__(self, interpreter, n1):
     self.n1 = n1
   def execute(self):
     try:
@@ -440,6 +441,32 @@ class AbsoluteValueInstruction(Instruction):
     except AttributeError:
       n1 = self.n1
     return abs(n1)
+class RoundInstruction(Instruction):
+  def __init__(self, interpreter, n):
+    self.n = n
+  def execute(self):
+    try:
+      n = self.n.execute()
+    except AttributeError:
+      n = self.n
+    return round(n)
+class RandomNumberInstruction(Instruction):
+  def __init__(self, interpreter, n1, n2):
+    self.n1 = n1
+    self.n2 = n2
+  def execute(self):
+    try:
+      n1 = self.n1.execute()
+    except AttributeError:
+      n1 = self.n1
+    try:
+      n2 = self.n2.execute()
+    except AttributeError:
+      n2 = self.n2
+    return random.randint(n1, n2)
+class RandomFloatInstruction(Instruction):
+  def execute(self):
+    return random.random()
 
 class WhileLoopInstruction(Instruction):
   def __init__(self, interpreter, comparison, *args):
@@ -500,7 +527,35 @@ class ForItemInstruction(Instruction):
       return self.interpreter._forLoopItem
     else:
       raise ValueError("Cannot use this instruction outside of a for loop!")
-
+class FunctionInstruction(Instruction):
+  def __init__(self, interpreter, *args):
+    self.instructions = args
+  def execute(self):
+    for l in self.instructions:
+      try:
+        l.execute()
+      except AttributeError:
+        pass
+class IfInstruction(Instruction):
+  def __init__(self, interpreter, condition, true, false=None):
+    self.condition = condition
+    self.true = true
+    self.false = false
+  def execute(self):
+    try:
+      c = self.condition.execute()
+    except AttributeError:
+      c = self.condition
+    if c == True:
+      try:
+        self.true.execute()
+      except AttributeError:
+        pass
+    else:
+      try:
+        self.false.execute()
+      except AttributeError:
+        pass
 
 class DelayInstruction(Instruction):
   def __init__(self, interpreter, duration=1):
