@@ -131,7 +131,7 @@ class Interpreter():
           self.r = r
         
       for c, char in enumerate(argStr):
-        if (char == '"' or char == "'") and argStr[c-1] != "\\":
+        if (char == '"' or char == "'") and argStr[c-1] != "\\" and ignore == 0:
           inString = not inString
           continue
         if char == "(" and argStr[c-1] != "\\":
@@ -178,13 +178,12 @@ class Interpreter():
         raise SyntaxError("Unclosed parenthesis")
       if inString:
         raise SyntaxError("Unclosed string")
-      
       parsedArgs = []
       for arg in [i for i in args if i != '']:
         if type(arg) == list:
           parsedArgs.append(arg)
         elif type(arg) == String:
-          parsedArgs.append(arg.r)
+          parsedArgs.append(arg.r.replace("\\n", "\n"))
         elif arg[0] in CONSTANTS:
           parsedArgs.append(ConstantInstruction(CONSTANTS[arg[0]]))
         elif arg[0] in conversionTable:

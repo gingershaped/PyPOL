@@ -128,7 +128,10 @@ class MultiplicationInstruction(Instruction):
       n2 = self.n2.execute()
     except AttributeError:
       n2 = self.n2
-    return n1 * n2
+    if type(n1) == float or type(n1) == int:
+      return n1 * n2
+    else:
+      return n1 * int(n2)
 class DivisionInstruction(Instruction):
   def __init__(self, interpreter, n1, n2):
     self.n1 = n1
