@@ -218,8 +218,75 @@ class ListSumInstruction(Instruction):
       data = self.data
     if type(data) == list:
       return sum(data)
+    elif type(data) == float or type(data) == int:
+      return sum(int(x) for x in list(str(int(data))))
     else:
-      raise ValueError("Unable to interpret \'" + str(data) + "\' as list!")
+      raise ValueError("Unable to interpret \'" + str(data) + "\' as list or number!")
+class ListGetInstruction(Instruction):
+  def __init__(self, interpreter, list_, index=0):
+    self.index = index
+    self.list_ = list_
+  def execute(self):
+    try:
+      index = self.index.execute()
+    except AttributeError:
+      index = self.index
+    try:
+      l = self.list_.execute()
+    except AttributeError:
+      l = self.list_
+    return l[int(index)]
+class ListSetInstruction(Instruction):
+  def __init__(self, interpreter, list_, value, index=0):
+    self.index = index
+    self.list_ = list_
+    self.value = value
+  def execute(self):
+    try:
+      index = self.index.execute()
+    except AttributeError:
+      index = self.index
+    try:
+      l = self.list_.execute()
+    except AttributeError:
+      l = self.list_
+    try:
+      v = self.value.execute()
+    except AttributeError:
+      v = self.value
+    l[int(index)] = v
+    return l
+class ListPopInstruction(Instruction):
+  def __init__(self, interpreter, list_, index=0):
+    self.index = index
+    self.list_ = list_
+  def execute(self):
+    try:
+      index = self.index.execute()
+    except AttributeError:
+      index = self.index
+    try:
+      l = self.list_.execute()
+    except AttributeError:
+      l = self.list_
+    l.pop(int(index))
+    return l
+class ListRemoveInstruction(Instruction):
+  def __init__(self, interpreter, list_, value):
+    self.list_ = list_
+    self.value = value
+  def execute(self):
+    try:
+      l = self.list_.execute()
+    except AttributeError:
+      l = self.list_
+    try:
+      v = self.value.execute()
+    except AttributeError:
+      v = self.value
+    l.remove(v)
+    return l
+
 
 class MemoryWriteInstruction(Instruction):
   def __init__(self, interpreter, address, data):
@@ -277,6 +344,20 @@ class StringFindInstruction(Instruction):
     except AttributeError:
       f = self.toFind
     return s.find(f)
+class StringJoinInstruction(Instruction):
+  def __init__(self, interpreter, list_, sep=""):
+    self.string = list_
+    self.sep = sep
+  def execute(self):
+    try:
+      s = self.string.execute()
+    except AttributeError:
+      s = self.string
+    try:
+      f = self.sep.execute()
+    except AttributeError:
+      f = self.sep
+    return f.join(s)
 
 
 
@@ -290,6 +371,18 @@ class CastToNumberInstruction(Instruction):
       value = self.value
     try:
       return float(value)
+    except ValueError:
+      return None
+class CastToStringInstruction(Instruction):
+  def __init__(self, interpreter, value):
+    self.value = value
+  def execute(self):
+    try:
+      value = self.value.execute()
+    except AttributeError:
+      value = self.value
+    try:
+      return str(value)
     except ValueError:
       return None
 
@@ -406,7 +499,7 @@ class IncreaseInstruction(Instruction):
       a = self.address.execute()
     except AttributeError:
       a = self.address
-    self.interpreter[a] += 1
+    self.interpreter.memory[a] += 1
 class DecreaseInstruction(Instruction):
   def __init__(self, interpreter, address):
     self.interpreter = interpreter
@@ -416,7 +509,7 @@ class DecreaseInstruction(Instruction):
       a = self.address.execute()
     except AttributeError:
       a = self.address
-    self.interpreter[a] -= 1
+    self.interpreter.memory[a] -= 1
 class GetSignInstruction(Instruction):
   def __init__(self, interpreter, n1):
     self.n1 = n1

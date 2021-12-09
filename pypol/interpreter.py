@@ -17,13 +17,19 @@ conversionTable = {
   "v": MemoryWriteInstruction,
 
   "I": CastToNumberInstruction,
+  "t": CastToStringInstruction,
   "⌬": ReverseInstruction,
   "l": StringLengthInstruction,
   "⌕": StringFindInstruction,
   "s": StringSplitInstruction,
+  "j": StringJoinInstruction,
 
   "a": ListAppendInstruction,
   "⊕": ListSumInstruction,
+  "g": ListGetInstruction,
+  "S": ListSetInstruction,
+  "P": ListPopInstruction,
+  "r": ListRemoveInstruction,
 
   "w": WhileLoopInstruction,
   "f": ForLoopInstruction,
@@ -65,10 +71,12 @@ altNames = {
   "floordiv": "∸",
   "write": "v",
   "castnumber": "I",
+  "caststring": "t",
   "reverse": "⌬",
   "length": "l",
   "stringfind": "⌕",
   "stringsplit": "s",
+  "stringjoin": "j",
   "while": "w",
   "forcounter": "∈",
   "foritem": "∋",
@@ -87,12 +95,16 @@ altNames = {
   "getsign": "∓",
   "abs": "⌿",
   "append": "a",
-  "listsum": "⊕",
+  "sum": "⊕",
+  "listget": "g",
+  "listset": "S",
+  "listpop": "P",
+  "listremove": "r",
   "if": "?",
   "function": ":",
   "randnum": "∿",
   "randfloat": "≀",
-  "round": "≖",
+  "roundnum": "≖",
 }
 
 class Interpreter():
@@ -144,27 +156,37 @@ class Interpreter():
               if i.lstrip() != "":
                 l.append(i.lstrip())
             else:
-              args.append(String(i.lstrip()))
+              args.append(String(i))
           else:
             if inList:
               try:
-                l.append(float(i.lstrip()))
+                l.append(int(i.lstrip()))
               except ValueError:
-                if i.lstrip() != "":
-                  l.append(i.lstrip())
+                try:
+                  l.append(float(i.lstrip()))
+                except ValueError:
+                  if i.lstrip() != "":
+                    l.append(i.lstrip())
             else:
               args.append(i.lstrip())
           i = ""
+          continue
         if char == "[" and argStr[c-1] != "\\":
           inList = True
           continue
         elif char == "]" and argStr[c-1] != "\\":
           inList = False
-          try:
-            l.append(float(i.lstrip()))
-          except ValueError:
-            if i.lstrip() != "":
-              l.append(i.lstrip())
+          if argStr[c-1] == "'" or argStr[c-1] == '"':
+            l.append(i.lstrip())
+          else:
+            try:
+              l.append(int(i.lstrip()))
+            except ValueError:
+              try:
+                l.append(float(i.lstrip()))
+              except ValueError:
+                if i.lstrip() != "":
+                  l.append(i.lstrip())
           args.append(l)
           l = []
           i = ""
@@ -189,7 +211,10 @@ class Interpreter():
         elif arg[0] in conversionTable:
           parsedArgs.append(parseInstruction(arg))
         elif all([c in "-1234567890" for c in arg]):
-          parsedArgs.append(float(arg))
+          try:
+            parsedArgs.append(int(arg))
+          except ValueError:
+            parsedArgs.append(float(arg))
         elif any(c in "⁰¹²³⁴⁵⁶⁷⁸⁹" for c in arg):
           try:
             parsedArgs.append(MemoryReadInstruction(self, int("".join([str("⁰¹²³⁴⁵⁶⁷⁸⁹".find(c)) for c in arg]))))
