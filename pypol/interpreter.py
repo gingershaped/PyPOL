@@ -131,13 +131,21 @@ class Interpreter():
     def parseInstruction(instruction):
       if instruction[0] in CONSTANTS:
         return ConstantInstruction(CONSTANTS[instruction[0]])
+      if instruction[0] in "⁰¹²³⁴⁵⁶⁷⁸⁹":
+        try:
+            return MemoryReadInstruction(self, int("".join([str("⁰¹²³⁴⁵⁶⁷⁸⁹".find(c)) for c in instruction])))
+        except ValueError:
+          raise ValueError("Error processing cell id: " + arg + " Make sure you're not using superscript numbers to refer to cells, or that you mistyped an instruction.") from None
       try:
         t = conversionTable[instruction[0]]
       except KeyError:
         raise SyntaxError("Invalid instruction: " + instruction[0])
       argStr = instruction[1:].split("(", 1)[-1]
       if not len(argStr):
-        return t(self)
+        try:
+          return t(self)
+        except TypeError as e:
+          raise TypeError(str(e) + " in instruction " + instruction) from None
       args = []
       i = ""
       l = []
@@ -157,12 +165,12 @@ class Interpreter():
         elif char == ")" and argStr[c-1] != "\\":
           ignore -= 1
         if ((char == " " and ignore == 0) or (c == len(argStr)-1)) and (not inString):
-          if argStr[c-1] == "'" or argStr[c-1] == '"':
+          if argStr[c-1] == "'" or argStr[c-1] == '"' or argStr[c-len(i)] == "\\":
             if inList:
               if i.lstrip() != "":
                 l.append(i.lstrip())
             else:
-              args.append(String(i))
+              args.append(String(i[1:]) if argStr[c-len(i)] == "\\" else String(i))
           else:
             if inList:
               try:

@@ -65,7 +65,7 @@ class PrintInstruction(Instruction):
     except AttributeError:
       e = self.end
     if type(o) == float:
-      print(o - int(0))
+      #print(o - int(0))
       if o - int(o) == 0:
         o = int(o)
     print(o, end=e)
