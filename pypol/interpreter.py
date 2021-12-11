@@ -4,6 +4,8 @@ import sys
 conversionTable = {
   "p": PrintInstruction,
   "i": InputInstruction,
+  "⧤": FloatInputInstruction,
+  "⧣": IntInputInstruction,
 
   "+": AdditionInstruction,
   "-": SubtractionInstruction,
@@ -33,6 +35,7 @@ conversionTable = {
 
   "w": WhileLoopInstruction,
   "f": ForLoopInstruction,
+  "ⅎ": OneForLoopInstruction,
   "∈": ForCounterInstruction,
   "∋": ForItemInstruction,
   "?": IfInstruction,
@@ -64,6 +67,8 @@ conversionTable = {
 
 altNames = {
   "print": "p",
+  "floatinput": "⧤",
+  "intinput": "⧣",
   "input": "i",
   "add": "+",
   "subtract": "-",
@@ -83,6 +88,7 @@ altNames = {
   "while": "w",
   "forcounter": "∈",
   "foritem": "∋",
+  "onefor": "ⅎ",
   "for": "f",
   "delay": "⍭",
   "lessthan": "<",

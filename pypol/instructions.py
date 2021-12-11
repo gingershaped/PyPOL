@@ -93,6 +93,30 @@ class InputInstruction(Instruction):
     except AttributeError:
       prompt = self.prompt
     return input(prompt)
+class FloatInputInstruction(Instruction):
+  def __init__(self, interpreter, prompt=""):
+    self.prompt = prompt
+  def execute(self):
+    try:
+      prompt = self.prompt.execute()
+    except AttributeError:
+      prompt = self.prompt
+    try:
+      return float(input(prompt))
+    except ValueError:
+      return None
+class IntInputInstruction(Instruction):
+  def __init__(self, interpreter, prompt=""):
+    self.prompt = prompt
+  def execute(self):
+    try:
+      prompt = self.prompt.execute()
+    except AttributeError:
+      prompt = self.prompt
+    try:
+      return int(float(input(prompt)))
+    except ValueError:
+      return None
 
 class AdditionInstruction(Instruction):
   def __init__(self, interpreter, n1, n2):
@@ -660,6 +684,29 @@ class ForLoopInstruction(Instruction):
 
     for c, x in enumerate(i):
       self.interpreter._forLoopCounter = c
+      self.interpreter._forLoopItem = x
+      for l in self.instructions:
+        try:
+          l.execute()
+        except AttributeError:
+          pass
+    self.interpreter._forLoopCounter = None
+    self.interpreter._forLoopItem = None
+class OneForLoopInstruction(Instruction):
+  def __init__(self, interpreter, iterations, *args):
+    self.interpreter = interpreter
+    self.iterations = iterations
+    self.instructions = args
+  def execute(self):
+    try:
+      i = self.iterations.execute()
+    except AttributeError:
+      i = self.iterations
+    if type(i) == float or type(i) == int:
+      i = range(int(i))
+
+    for c, x in enumerate(i):
+      self.interpreter._forLoopCounter = c+1
       self.interpreter._forLoopItem = x
       for l in self.instructions:
         try:
