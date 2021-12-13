@@ -4,6 +4,7 @@ CONSTANTS = {
   "↹": "PyPOL APOL interpreter v0.1.0 by Ginger Industries 2021",
   "T": True, 
   "F": False, 
+  "X": None,
   "ĥ": "Hello, World!", 
   "ô": 100,
   "õ": 1000,
