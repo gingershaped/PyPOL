@@ -25,6 +25,7 @@ conversionTable = {
   "⌕": StringFindInstruction,
   "s": StringSplitInstruction,
   "j": StringJoinInstruction,
+  "V": SubstringInstruction,
 
   "a": ListAppendInstruction,
   "⊕": ListSumInstruction,
@@ -82,6 +83,7 @@ altNames = {
   "caststring": "t",
   "reverse": "⌬",
   "length": "l",
+  "substring": "V",
   "stringfind": "⌕",
   "stringsplit": "s",
   "stringjoin": "j",
@@ -156,7 +158,7 @@ class Interpreter():
       i = ""
       l = []
       ignore = 0
-      inString = False
+      inString = ""
       inList = False
       class String():
         def __init__(self, r):
@@ -164,8 +166,12 @@ class Interpreter():
         
       for c, char in enumerate(argStr):
         if (char == '"' or char == "'") and argStr[c-1] != "\\" and ignore == 0:
-          inString = not inString
-          continue
+          if char == inString:
+            inString = ""
+            continue
+          elif not inString:
+            inString = char
+            continue
         if char == "(" and argStr[c-1] != "\\":
           ignore += 1
         elif char == ")" and argStr[c-1] != "\\":

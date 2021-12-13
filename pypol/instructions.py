@@ -389,7 +389,30 @@ class StringJoinInstruction(Instruction):
     except AttributeError:
       f = self.sep
     return f.join(s)
-
+class SubstringInstruction(Instruction):
+  def __init__(self, interpreter, instr, start, end=None):
+    self.instr = instr
+    if end == -1:
+      self.end = start
+      self.start = 0
+    else:
+      self.start = start
+      self.end = end
+    
+  def execute(self):
+    try:
+      t = self.instr.execute()
+    except AttributeError:
+      t = self.instr
+    try:
+      s = self.start.execute()
+    except AttributeError:
+      s = self.start
+    try:
+      e = self.end.execute()
+    except AttributeError:
+      e = self.end
+    return t[s:e]
 
 
 class CastToNumberInstruction(Instruction):
