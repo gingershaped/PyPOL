@@ -40,6 +40,7 @@ conversionTable = {
   "∈": ForCounterInstruction,
   "∋": ForItemInstruction,
   "?": IfInstruction,
+  "¿": ReturningIfInstruction,
   ":": FunctionInstruction,
   "⍭": DelayInstruction,
 
@@ -111,6 +112,7 @@ altNames = {
   "listset": "S",
   "listpop": "P",
   "listremove": "r",
+  "returnif": "¿",
   "if": "?",
   "function": ":",
   "randnum": "∿",

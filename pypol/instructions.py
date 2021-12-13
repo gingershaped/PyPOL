@@ -6,6 +6,7 @@ CONSTANTS = {
   "F": False, 
   "ĥ": "Hello, World!", 
   "ô": 100,
+  "õ": 1000,
   "ó": 1000000,
   "ò": 1000000000,
   "π": math.pi,
@@ -655,9 +656,13 @@ class RoundInstruction(Instruction):
       n = self.n
     return round(n)
 class RandomNumberInstruction(Instruction):
-  def __init__(self, interpreter, n1, n2):
-    self.n1 = n1
-    self.n2 = n2
+  def __init__(self, interpreter, n1, n2=None):
+    if not n2:
+      self.n2 = n1
+      self.n1 = 0
+    else:
+      self.n1 = n1
+      self.n2 = n2
   def execute(self):
     try:
       n1 = self.n1.execute()
@@ -775,14 +780,35 @@ class IfInstruction(Instruction):
       c = self.condition
     if bool(c):
       try:
-        self.true.execute()
+        r = self.true.execute()
       except AttributeError:
-        pass
+        r = self.true
     else:
       try:
-        self.false.execute()
+        r = self.false.execute()
       except AttributeError:
-        pass
+        r = self.false
+class ReturningIfInstruction(Instruction):
+  def __init__(self, interpreter, condition, true, false=None):
+    self.condition = condition
+    self.true = true
+    self.false = false
+  def execute(self):
+    try:
+      c = self.condition.execute()
+    except AttributeError:
+      c = self.condition
+    if bool(c):
+      try:
+        r = self.true.execute()
+      except AttributeError:
+        r = self.true
+    else:
+      try:
+        r = self.false.execute()
+      except AttributeError:
+        r = self.false
+    return r
 
 class DelayInstruction(Instruction):
   def __init__(self, interpreter, duration=1):
