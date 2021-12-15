@@ -392,7 +392,7 @@ class StringJoinInstruction(Instruction):
       f = self.sep.execute()
     except AttributeError:
       f = self.sep
-    return f.join(s)
+    return f.join([str(i) for i in s])
 class SubstringInstruction(Instruction):
   def __init__(self, interpreter, instr, start, end=None):
     self.instr = instr
@@ -418,6 +418,24 @@ class SubstringInstruction(Instruction):
       e = self.end
     return t[s:e]
 
+class Char2CodepointInstruction(Instruction):
+  def __init__(self, interpreter, string):
+    self.string = string
+  def execute(self):
+    try:
+      s = self.string.execute()
+    except AttributeError:
+      s = self.string
+    return ord(s[0])
+class Codepoint2CharInstruction(Instruction):
+  def __init__(self, interpreter, string):
+    self.string = string
+  def execute(self):
+    try:
+      s = self.string.execute()
+    except AttributeError:
+      s = self.string
+    return chr(s)
 
 class CastToNumberInstruction(Instruction):
   def __init__(self, interpreter, value):
@@ -746,6 +764,29 @@ class OneForLoopInstruction(Instruction):
           pass
     self.interpreter._forLoopCounter = None
     self.interpreter._forLoopItem = None
+class ListBuilderForLoopInstruction(Instruction):
+  def __init__(self, interpreter, iterations, instruction):
+    self.interpreter = interpreter
+    self.iterations = iterations
+    self.instruction = instruction
+  def execute(self):
+    try:
+      i = self.iterations.execute()
+    except AttributeError:
+      i = self.iterations
+    if type(i) == float or type(i) == int:
+      i = range(int(i))
+    r = []
+    for c, x in enumerate(i):
+      self.interpreter._forLoopCounter = c+1
+      self.interpreter._forLoopItem = x
+      try:
+        r.append(self.instruction.execute())
+      except AttributeError:
+        pass
+    self.interpreter._forLoopCounter = None
+    self.interpreter._forLoopItem = None
+    return r
 class ForCounterInstruction(Instruction):
   def __init__(self, interpreter):
     self.interpreter = interpreter
