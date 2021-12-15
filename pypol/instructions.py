@@ -47,7 +47,7 @@ CONSTANTS = {
 
 class Instruction():
   def __init__(self, interpreter):
-    pass
+    self.interpreter = interpreter
 class ConstantInstruction(Instruction):
   def __init__(self, constant):
     self.constant = constant
@@ -840,6 +840,7 @@ class FunctionInstruction(Instruction):
         pass
 class IfInstruction(Instruction):
   def __init__(self, interpreter, condition, true, false=None):
+    self.interpreter = interpreter
     self.condition = condition
     self.true = true
     self.false = false
@@ -848,6 +849,7 @@ class IfInstruction(Instruction):
       c = self.condition.execute()
     except AttributeError:
       c = self.condition
+    self.interpreter._ifItem = c
     if bool(c):
       try:
         r = self.true.execute()
@@ -858,8 +860,10 @@ class IfInstruction(Instruction):
         r = self.false.execute()
       except AttributeError:
         r = self.false
+    self.interpreter._ifItem = None
 class ReturningIfInstruction(Instruction):
   def __init__(self, interpreter, condition, true, false=None):
+    self.interpreter = interpreter
     self.condition = condition
     self.true = true
     self.false = false
@@ -868,6 +872,7 @@ class ReturningIfInstruction(Instruction):
       c = self.condition.execute()
     except AttributeError:
       c = self.condition
+    self.interpreter._ifItem = c
     if bool(c):
       try:
         r = self.true.execute()
@@ -878,7 +883,13 @@ class ReturningIfInstruction(Instruction):
         r = self.false.execute()
       except AttributeError:
         r = self.false
+    self.interpreter._ifItem = None
     return r
+class IfItemInstruction(Instruction):
+  def execute(self):
+    if not self.interpreter._ifItem:
+      raise ValueError("Cannot use this instruction outside of an if statement!")
+    return self.interpreter._ifItem
 
 class DelayInstruction(Instruction):
   def __init__(self, interpreter, duration=1):

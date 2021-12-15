@@ -46,6 +46,7 @@ conversionTable = {
   "∋": ForItemInstruction,
   "?": IfInstruction,
   "¿": ReturningIfInstruction,
+  "⋔": IfItemInstruction,
   ":": FunctionInstruction,
   "⍭": DelayInstruction,
 
@@ -98,6 +99,7 @@ altNames = {
   "while": "w",
   "forcounter": "∈",
   "foritem": "∋",
+  "ifitem": "⋔",
   "onefor": "ⅎ",
   "startendfor": "ḟ",
   "listfor": "ƒ",
@@ -144,6 +146,7 @@ class Interpreter():
     self.lastError = None
     self._forLoopCounter = None
     self._forLoopItem = None
+    self._ifItem = None
   
   def interpret(self, program):
     instructions = []
