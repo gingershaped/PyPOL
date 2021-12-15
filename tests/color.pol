@@ -1,0 +1,2 @@
+v(0 i)
+!(&(|(stringfind(⁰ \d) stringfind(⁰ \e)) !(stringfind(⁰ \p))))

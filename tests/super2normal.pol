@@ -1,0 +1,3 @@
+v(0 [])
+f(i append(0 t(stringfind("⁰¹²³⁴⁵⁶⁷⁸⁹" foritem))))
+I(j(⁰))

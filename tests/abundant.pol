@@ -1,0 +1,4 @@
+v(0 intinput)
+v(1 [])
+onefor(⁰ ?(<(modulo(⁰ forcounter) 1) a(1 forcounter)))
+>(sum(¹) ⁰)

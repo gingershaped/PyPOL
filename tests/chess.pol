@@ -1,0 +1,1 @@
+startendfor(10 18 v(0 foritem) startendfor(1 9 p(*(18 +(foritem ⁰)))))
