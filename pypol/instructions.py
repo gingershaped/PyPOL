@@ -741,6 +741,32 @@ class ForLoopInstruction(Instruction):
           pass
     self.interpreter._forLoopCounter = None
     self.interpreter._forLoopItem = None
+class StartEndForLoopInstruction(Instruction):
+  def __init__(self, interpreter, start, end, *args):
+    self.interpreter = interpreter
+    self.start = start
+    self.end = end
+    self.instructions = args
+  def execute(self):
+    try:
+      s = self.start.execute()
+    except AttributeError:
+      s = self.start
+    try:
+      e = self.end.execute()
+    except AttributeError:
+      e = self.end
+
+    for c, x in enumerate(range(s, e)):
+      self.interpreter._forLoopCounter = c
+      self.interpreter._forLoopItem = x
+      for l in self.instructions:
+        try:
+          l.execute()
+        except AttributeError:
+          pass
+    self.interpreter._forLoopCounter = None
+    self.interpreter._forLoopItem = None
 class OneForLoopInstruction(Instruction):
   def __init__(self, interpreter, iterations, *args):
     self.interpreter = interpreter
