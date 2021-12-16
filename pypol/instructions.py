@@ -729,8 +729,10 @@ class ForLoopInstruction(Instruction):
     except AttributeError:
       i = self.iterations
     if type(i) == float or type(i) == int:
+      self.interpreter._forLoopIterator = i
       i = range(int(i))
-
+    else:
+      self.interpreter._forLoopIterator = i
     for c, x in enumerate(i):
       self.interpreter._forLoopCounter = c
       self.interpreter._forLoopItem = x
@@ -741,6 +743,7 @@ class ForLoopInstruction(Instruction):
           pass
     self.interpreter._forLoopCounter = None
     self.interpreter._forLoopItem = None
+    self.interpreter._forLoopIterator = None
 class StartEndForLoopInstruction(Instruction):
   def __init__(self, interpreter, start, end, *args):
     self.interpreter = interpreter
@@ -756,7 +759,7 @@ class StartEndForLoopInstruction(Instruction):
       e = self.end.execute()
     except AttributeError:
       e = self.end
-
+    self.interpreter._forLoopIterator = e
     for c, x in enumerate(range(s, e)):
       self.interpreter._forLoopCounter = c
       self.interpreter._forLoopItem = x
@@ -767,6 +770,7 @@ class StartEndForLoopInstruction(Instruction):
           pass
     self.interpreter._forLoopCounter = None
     self.interpreter._forLoopItem = None
+    self.interpreter._forLoopIterator = None
 class OneForLoopInstruction(Instruction):
   def __init__(self, interpreter, iterations, *args):
     self.interpreter = interpreter
@@ -778,7 +782,10 @@ class OneForLoopInstruction(Instruction):
     except AttributeError:
       i = self.iterations
     if type(i) == float or type(i) == int:
+      self.interpreter._forLoopIterator = i
       i = range(int(i))
+    else:
+      self.interpreter._forLoopIterator = i
 
     for c, x in enumerate(i):
       self.interpreter._forLoopCounter = c+1
@@ -790,6 +797,7 @@ class OneForLoopInstruction(Instruction):
           pass
     self.interpreter._forLoopCounter = None
     self.interpreter._forLoopItem = None
+    self.interpreter._forLoopIterator = None
 class ListBuilderForLoopInstruction(Instruction):
   def __init__(self, interpreter, iterations, instruction):
     self.interpreter = interpreter
@@ -801,10 +809,14 @@ class ListBuilderForLoopInstruction(Instruction):
     except AttributeError:
       i = self.iterations
     if type(i) == float or type(i) == int:
+      self.interpreter._forLoopIterator = i
       i = range(int(i))
+    else:
+      self.interpreter._forLoopIterator = i
+      
     r = []
     for c, x in enumerate(i):
-      self.interpreter._forLoopCounter = c+1
+      self.interpreter._forLoopCounter = c
       self.interpreter._forLoopItem = x
       try:
         r.append(self.instruction.execute())
@@ -812,6 +824,7 @@ class ListBuilderForLoopInstruction(Instruction):
         pass
     self.interpreter._forLoopCounter = None
     self.interpreter._forLoopItem = None
+    self.interpreter._forLoopIterator = None
     return r
 class ForCounterInstruction(Instruction):
   def __init__(self, interpreter):
@@ -819,6 +832,14 @@ class ForCounterInstruction(Instruction):
   def execute(self):
     if self.interpreter._forLoopCounter != None:
       return self.interpreter._forLoopCounter
+    else:
+      raise ValueError("Cannot use this instruction outside of a for loop!")
+class ForIteratorInstruction(Instruction):
+  def __init__(self, interpreter):
+    self.interpreter = interpreter
+  def execute(self):
+    if self.interpreter._forLoopIterator != None:
+      return self.interpreter._forLoopIterator
     else:
       raise ValueError("Cannot use this instruction outside of a for loop!")
 class ForItemInstruction(Instruction):

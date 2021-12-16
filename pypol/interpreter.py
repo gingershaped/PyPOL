@@ -44,6 +44,7 @@ conversionTable = {
   "ḟ": StartEndForLoopInstruction, 
   "∈": ForCounterInstruction,
   "∋": ForItemInstruction,
+  "⋒": ForIteratorInstruction,
   "?": IfInstruction,
   "¿": ReturningIfInstruction,
   "⋔": IfItemInstruction,
@@ -97,6 +98,7 @@ altNames = {
   "tocodepoint": "↶",
   "tochar": "↷",
   "while": "w",
+  "foriterator": "⋒",
   "forcounter": "∈",
   "foritem": "∋",
   "ifitem": "⋔",
@@ -146,6 +148,7 @@ class Interpreter():
     self.lastError = None
     self._forLoopCounter = None
     self._forLoopItem = None
+    self._forLoopIterator = None
     self._ifItem = None
   
   def interpret(self, program):
