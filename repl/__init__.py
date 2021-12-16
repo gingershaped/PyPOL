@@ -1,5 +1,5 @@
 from pypol.interpreter import Interpreter
-import traceback, sys, pprint
+import traceback, sys, pprint, os.path
 
 def run(code, interpreter, debug, autorestart):
   try:
@@ -55,6 +55,26 @@ def repl():
         print("No traceback available")
     elif code == "/exit":
       exit(0)
+    elif code.startswith("/loadabf"):
+      name = " ".join(code.split(" ")[1:])
+      try:
+        kc = open(name, "rb")
+      except FileNotFoundError:
+        print("No such file:", name)
+        continue
+      except OSError as e:
+        print("Error loading file \"", name, "\":", str(e))
+        continue
+      interpreter.fileName = " ".join(code.split(" ")[1:])
+      program = kc.read()
+      kc.close()
+      interpreter.restart()
+      print("=====INTERPRETER RESTART=====")
+      try:
+        run(interpreter.decompile(program), interpreter, False, False)
+      except KeyboardInterrupt:
+        print("Program terminated.")
+      interpreter.fileName = "<shell>"
     elif code.startswith("/load"):
       name = " ".join(code.split(" ")[1:])
       try:
@@ -90,6 +110,26 @@ def repl():
       kc.close()
       p = ";".join(interpreter.prepare(program))
       print(p, len(p), "bytes")
+    elif code.startswith("/compile"):
+      name = " ".join(code.split(" ")[1:])
+      try:
+        kc = open(name)
+      except FileNotFoundError:
+        print("No such file:", name)
+        continue
+      except OSError as e:
+        print("Error loading file \"", name, "\":", str(e))
+        continue
+      program = kc.read()
+      kc.close()
+      try:
+        open(os.path.splitext(name)[0] + ".abf", "x")
+      except FileExistsError:
+        print("File exists!")
+      else:
+        n = open(os.path.splitext(name)[0] + ".abf", "wb")
+        n.write(interpreter.compile(";".join(interpreter.prepare(program))))
+        n.close()
     elif code.startswith("/"):
       print("Invalid command")
     else:

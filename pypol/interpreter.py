@@ -1,6 +1,8 @@
 from .instructions import *
 import sys
 
+codepage = "abcdefghijklmnopqrstuvwxyzABCDE FGHIGKLMNOPQRSTUVWXYZ+-*/%^?:<>=&!|\"\'()0123456789[]⁰¹²³⁴⁵⁶⁷⁸⁹\0\0\0@#$_\,;{}`~⌬⌕↶↷⊕ⅎƒḟ∈∋¿⋔⍭≤≥≠≬∆∇≐∓⌿∿≀≖⧤⧣∸⋒\n\0\0\0\0\0\0\0\0↹ĥôõöøóòπε\0\0\0\0\0\0Ⓠ⒬Ⓐ⒜ⓛⓁ①⑴⑩⑽⑨⑼\0\0\0\0⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑⒒⒓⒔⒕⒖"
+
 conversionTable = {
   "p": PrintInstruction,
   "i": InputInstruction,
@@ -137,6 +139,18 @@ altNames = {
 }
 
 class Interpreter():
+  @classmethod
+  def compile(self, program):
+    out = b""
+    for c in program:
+      if c in codepage:
+        out += (codepage.find(c).to_bytes(1, "big"))
+    return out
+  def decompile(self, bytecode):
+    out = ""
+    for byte in bytecode:
+      out += codepage[byte]
+    return out
   @classmethod
   def prepare(self, program):
     program = program.replace("\n", ";")
