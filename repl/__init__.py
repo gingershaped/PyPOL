@@ -30,14 +30,14 @@ def repl():
     elif code == "/help":
       print("""Commands list:
 /help: Displays this menu
-/load <path>: Loads and executes a .kc file
-/autorestart: Toggle auto-restart (the interpreter will restart every time a group of code is run, off by default)
+/load <path>: Loads and executes a .pol file
+/loadabf <path>: Loads and executes an .abf file
+/autorestart: Toggle auto-restart (the interpreter will restart every time a group of code is run, on by default)
 /restart: Restart the interpreter
 /memdump: Print the contents of memory
-/debug: Activates debug mode.
-/outputnumbers: Toggle showing the numerical value alongside the ascii one when using the << command (default off)
 /toascii and /fromascii: Utilities that convert a number to ascii and a character from ascii.
 /minify <path>: Prints a minifed (commentless, one-line) version of the program
+/compile <path>: Compiles the passed .pol file to an .abf bytecode file
       """)
     elif code == "/restart":
       print("==========INTERPRETER RESTART==========")

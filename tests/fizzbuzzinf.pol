@@ -1,0 +1,1 @@
+onefor(⒖ ?(&(=(%(forcounter 3) 0) =(%(forcounter 5) 0)) p("FizzBuzz") ?(!(%(forcounter 3)) p("Fizz") ?(!(%(forcounter 5)) p("Buzz") p(forcounter)))))
