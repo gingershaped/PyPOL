@@ -89,6 +89,7 @@ altNames = {
   "exponent": "^",
   "modulo": "%",
   "floordiv": "∸",
+  "dynamicread": "@",
   "write": "v",
   "castnumber": "I",
   "caststring": "t",
