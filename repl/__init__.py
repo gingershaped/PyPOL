@@ -6,8 +6,7 @@ def run(code, interpreter, debug, autorestart):
     _ = interpreter.run(code)
     if autorestart:
       interpreter.restart()
-  except (Exception) as e:
-    print("\n".join(traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1]))[:-1].lstrip(), file=sys.stderr)
+  except (Exception) as e: print("\n".join(traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1]))[:-1].lstrip(), file=sys.stderr)
 
 def repl():
   print("PyPOL REPL version 1.0")

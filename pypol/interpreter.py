@@ -19,6 +19,7 @@ conversionTable = {
   "∸": FloorDivisionInstruction,
 
   "v": MemoryWriteInstruction,
+  "@": DynamicReadInstruction,
 
   "I": CastToNumberInstruction,
   "t": CastToStringInstruction,

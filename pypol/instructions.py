@@ -338,6 +338,16 @@ class MemoryWriteInstruction(Instruction):
     except AttributeError:
       data = self.data
     self.interpreter.memory[int(address)] = data
+class DynamicReadInstruction(Instruction):
+  def __init__(self, interpreter, address, data=0):
+    self.address = address
+    self.interpreter = interpreter
+  def execute(self):
+    try:
+      address = self.address.execute()
+    except AttributeError:
+      address = self.address
+    return MemoryReadInstruction(self.interpreter, int(address)).execute()
 class MemoryReadInstruction(Instruction):
   # This class is not meant to be created directly, use the superscript numbers instead
   def __init__(self, interpreter, address):
