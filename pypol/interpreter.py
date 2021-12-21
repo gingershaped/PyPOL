@@ -33,6 +33,9 @@ conversionTable = {
   "↶": Char2CodepointInstruction,
   "↷": Codepoint2CharInstruction,
 
+  "A": ExecuteAsAPOLInstruction,
+  #"y": ExecuteAsPythonInstruction,
+
   "a": ListAppendInstruction,
   "⊕": ListSumInstruction,
   "g": ListGetInstruction,
