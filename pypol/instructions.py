@@ -224,6 +224,19 @@ class ExponentInstruction(Instruction):
       n2 = self.n2
     return n1 ** n2
 
+class ExecuteAsAPOLInstruction(Instruction):
+  def __init__(self, interpreter, code):
+    self.code = code
+    self.interpreter = interpreter
+  def execute(self):
+    return self.interpreter.interpret(self.code)[0].execute()
+class ExecuteAsPythonInstruction(Instruction):
+  def __init__(self, interpreter, code):
+    self.code = code
+    self.interpreter = interpreter
+  def execute(self):
+    return eval(self.code)
+
 class ListAppendInstruction(Instruction):
   def __init__(self, interpreter, address, data):
     self.address = address
