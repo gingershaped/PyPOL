@@ -1,3 +1,2 @@
-* v(cell value): Sets cell to value
-* a(cell value): Appends value to the list in cell
-* i(prompt): gets input
+This repo is out of date, check the replit.
+https://replit.com/@GingerIndustries/APOL#tests/biglist.pol
